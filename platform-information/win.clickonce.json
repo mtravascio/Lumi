@@ -1,5 +1,1 @@
-{
-    "platform": "Windows",
-    "package": "clickonce",
-    "supportsUpdates": "yes"
-}
+{"package": "nsis"}

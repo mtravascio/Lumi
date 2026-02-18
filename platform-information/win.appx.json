@@ -1,5 +1,1 @@
-{
-    "platform": "Windows",
-    "package": "appx",
-    "supportsUpdates": "external"
-}
+{"package": "appx"}

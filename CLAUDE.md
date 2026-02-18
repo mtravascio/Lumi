@@ -29,12 +29,19 @@ npm run build:client    # React client build
 npm run build:reporter-client
 
 # Platform-specific builds (cross-platform)
-npm run build:linux     # Creates AppImage + DEB for Linux
+npm run build:linux     # Creates AppImage + DEB + Pacman + Snap for Linux
 npm run build:linux:appimage  # Only AppImage
 npm run build:linux:deb      # Only DEB package
+npm run build:linux:pacman   # Only Pacman package
+npm run build:linux:snap     # Only Snap package
 npm run build:mac       # Creates macOS app
-npm run build:win       # Creates Windows installer
-npm run build:win32     # Creates Windows 32-bit installer
+npm run build:win       # Creates all Windows builds (ia32, arm64, x64, portable, appx)
+npm run build:win:ia32  # Windows 32-bit installer
+npm run build:win:arm64 # Windows ARM64 installer
+npm run build:win:x64   # Windows 64-bit installer
+npm run build:win:machine # Windows multi-user installer (all archs)
+npm run build:win:portable # Windows portable (all archs)
+npm run build:win:appx  # Windows AppX/MSIX (Microsoft Store)
 
 # Clean build artifacts
 npm run clean
