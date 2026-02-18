@@ -4,7 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Lumi is a desktop application for creating, editing, and displaying H5P interactive content. It runs as an Electron app with a Node.js/Express backend and React frontend.
+This is a fork of [Lumi](https://github.com/Lumieducation/Lumi) with SCORM export fixes. Lumi is a desktop application for creating, editing, and displaying H5P interactive content. It runs as an Electron app with a Node.js/Express backend and React frontend.
+
+### Key Changes from Original
+
+- **Version**: 0.11.0 (based on v0.10.0 stable codebase)
+- **SCORM Export**: Fixed freezing issues with interactive video H5P content
+- **H5P Libraries**: Uses `@lumieducation/h5p-*` version 9.1.2 (stable)
+- **Tracking**: Sentry and Matomo tracking disabled
+- **Build**: Cross-platform scripts (Windows, Linux, macOS)
 
 ## Build Commands
 
@@ -20,10 +28,16 @@ npm run build:server    # TypeScript compilation
 npm run build:client    # React client build
 npm run build:reporter-client
 
-# Platform-specific builds
-npm run build:linux     # Creates AppImage, deb, snap
+# Platform-specific builds (cross-platform)
+npm run build:linux     # Creates AppImage + DEB for Linux
+npm run build:linux:appimage  # Only AppImage
+npm run build:linux:deb      # Only DEB package
 npm run build:mac       # Creates macOS app
 npm run build:win       # Creates Windows installer
+npm run build:win32     # Creates Windows 32-bit installer
+
+# Clean build artifacts
+npm run clean
 ```
 
 ## Development Commands
@@ -35,11 +49,10 @@ npm run start:dev
 # Run in production mode
 npm run start
 
-# Linting
-npm run lint
-
-# Format code
-npm run format
+# Linting and formatting
+npm run lint            # Check for issues
+npm run format          # Auto-fix formatting
+npm run format:check    # Check formatting only
 
 # Run tests
 npm test
@@ -94,9 +107,33 @@ This project uses `@lumieducation/h5p-*` version 9.1.2. When upgrading these lib
 - HtmlExporter methods
 - PostCSS processing behavior
 
+## Cross-Platform Build Notes
+
+The build scripts use cross-platform tools:
+- `shx` - Shell commands that work on Windows/Linux/macOS
+- `rimraf` - Cross-platform `rm -rf`
+- `cross-env` - Cross-platform environment variables
+
+No shell scripts (`.sh` or `.bat`) are required for building.
+
 ## Localization
 
 Translations are in `locales/lumi/`. Use the localize script to auto-translate:
 ```bash
 npm run localize
 ```
+
+## Commit Convention
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/). Commit messages must follow the format:
+
+```
+type(scope): description
+
+# Examples:
+chore(release): v0.11.0
+fix(export): resolve SCORM freeze issue
+docs(readme): update installation instructions
+```
+
+Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`

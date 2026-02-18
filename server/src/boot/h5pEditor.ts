@@ -55,5 +55,13 @@ export default async function createH5PEditor(
         }
     );
 
+    // Force update of content type cache from H5P Hub at startup
+    try {
+        await h5pEditor.contentTypeCache.forceUpdate();
+    } catch (error) {
+        // Log error but don't fail startup - can retry later
+        console.error('Failed to update H5P content type cache:', error);
+    }
+
     return h5pEditor;
 }
