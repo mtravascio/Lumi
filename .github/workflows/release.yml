@@ -1,12 +1,32 @@
-name: Release
+name: Build and Release
 
 on:
     push:
-        branches:
-            - release
+        tags:
+            - 'v*'
 
 jobs:
-    release:
+    build-linux:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Use Node.js 16.x
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16.x
+            - name: Install dependencies
+              run: npm ci && (cd client && npm ci) && (cd reporter-client && npm ci)
+            - name: Build
+              run: npm run build
+            - name: Build Linux
+              run: npm run build:linux
+            - name: Upload AppImage
+              uses: actions/upload-artifact@v3
+              with:
+                  name: Lumi-Linux
+                  path: dist/*.AppImage
+
+    build-mac:
         runs-on: macos-latest
         steps:
             - uses: actions/checkout@v3
@@ -14,96 +34,63 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 16.x
-            - name: NPM Setup
-              run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-              env:
-                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-            - name: install
+            - name: Install dependencies
               run: npm ci && (cd client && npm ci) && (cd reporter-client && npm ci)
-            - name: Release
-              run: npm run semantic-release
-              env:
-                  CI: true
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
             - name: Build
               run: npm run build
-            - name: Publish macOS
-              run: npm run publish:mac
-              env:
-                  CI: true
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  CSC_LINK: ${{ secrets.mac_certs }}
-                  CSC_KEY_PASSWORD: ${{ secrets.mac_certs_password }}
-                  APPLEID: ${{ secrets.apple_id }}
-                  APPLEIDPASSWORD: ${{ secrets.apple_id_password }}
-                  APPLE_ASCPROVIDER: ${{ secrets.apple_ascprovider }}
+            - name: Build macOS
+              run: npm run build:mac:dev
+            - name: Upload macOS
+              uses: actions/upload-artifact@v3
+              with:
+                  name: Lumi-macOS
+                  path: dist/*.dmg
 
-    release-windows:
-        needs: release
+    build-windows:
         runs-on: windows-latest
         steps:
             - uses: actions/checkout@v3
-              with:
-                  ref: 'release'
             - name: Use Node.js 16.x
               uses: actions/setup-node@v3
               with:
                   node-version: 16.x
-            - name: NPM Setup
-              uses: filipstefansson/set-npm-token-action@v1
-              with:
-                  token: ${{ secrets.NPM_TOKEN }}
-            - name: install server
-              run: npm ci --legacy-peer-deps
-              env:
-                  NPM_TOKEN: $${ secrets.NPM_TOKEN }
-            - name: Copy NPM config
-              run: cp ./.npmrc ./client/.npmrc && cp ./.npmrc ./reporter-client/.npmrc
-            - name: install client(s)
-              run: (cd client && npm ci --legacy-peer-deps) && (cd ../reporter-client && npm ci --legacy-peer-deps)
-              env:
-                  NPM_TOKEN: $${ secrets.NPM_TOKEN }
-            - name: Build
-              run: npm run build
-            - name: Publish Windows
-              run: npm run publish:win
-              env:
-                  CI: true
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  APPX_APPLICATION_ID: ${{ secrets.APPX_APPLICATION_ID }}
-                  APPX_DISPLAY_NAME: ${{ secrets.APPX_DISPLAY_NAME }}
-                  APPX_IDENTITY_NAME: ${{ secrets.APPX_IDENTITY_NAME }}
-                  APPX_PUBLISHER: ${{ secrets.APPX_PUBLISHER }}
-                  APPX_PUBLISHER_DISPLAY_NAME: ${{ secrets.APPX_PUBLISHER_DISPLAY_NAME }}
-
-    release-linux:
-        needs: release
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v3
-              with:
-                  ref: 'release'
-            - name: Use Node.js 16.x
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 16.x
-            - name: NPM Setup
-              run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-              env:
-                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-            - name: install labarchive-tools
-              run: sudo apt install libarchive-tools
-            - name: install
+            - name: Install dependencies
               run: npm ci && (cd client && npm ci) && (cd reporter-client && npm ci)
             - name: Build
               run: npm run build
-            - name: Install Snapcraft
-              uses: samuelmeuli/action-snapcraft@v1
+            - name: Build Windows
+              run: npm run build:win
+            - name: Upload Windows
+              uses: actions/upload-artifact@v3
               with:
-                  snapcraft_token: ${{ secrets.snapcraft_token }}
-            - name: Publish Linux
-              run: npm run publish:linux
+                  name: Lumi-Windows
+                  path: dist/*.exe
+
+    release:
+        needs: [build-linux, build-mac, build-windows]
+        runs-on: ubuntu-latest
+        steps:
+            - name: Download Linux artifacts
+              uses: actions/download-artifact@v3
+              with:
+                  name: Lumi-Linux
+                  path: artifacts/linux
+            - name: Download macOS artifacts
+              uses: actions/download-artifact@v3
+              with:
+                  name: Lumi-macOS
+                  path: artifacts/mac
+            - name: Download Windows artifacts
+              uses: actions/download-artifact@v3
+              with:
+                  name: Lumi-Windows
+                  path: artifacts/windows
+            - name: Create Release
+              uses: softprops/action-gh-release@v1
+              with:
+                  files: |
+                      artifacts/linux/*
+                      artifacts/mac/*
+                      artifacts/windows/*
               env:
-                  CI: true
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,9 +1,9 @@
-import MatomoTrack from 'matomo-tracker';
-import * as Sentry from '@sentry/electron';
+// Matomo tracking disabled in fork version
+// Original: https://matomo.lumi.education/matomo.php
+const matomo = {
+    track: (_data?: any): void => {
+        // No-op: tracking disabled
+    }
+};
 
-const matomo = new MatomoTrack(1, 'https://matomo.lumi.education/matomo.php');
-
-matomo.on('error', (error) => {
-    Sentry.captureException(error);
-});
 export default matomo;

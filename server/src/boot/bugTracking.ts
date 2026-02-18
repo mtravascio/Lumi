@@ -27,16 +27,6 @@ const initSentry = (settingsCache: SettingsCache): void => {
 };
 
 export const initBugTracking = (settingsCache: SettingsCache): void => {
-    const settings = settingsCache.getSettingsSync();
-    if (process.env.NODE_ENV !== 'development' && settings.bugTracking) {
-        log.info('Initializing Sentry...');
-        initSentry(settingsCache);
-    } else {
-        log.info(
-            'Not initializing Sentry (',
-            process.env.NODE_ENV === 'development' ? 'in dev mode ' : '',
-            !settings.bugTracking ? 'bug tracking disabled in settings' : '',
-            ').'
-        );
-    }
+    // Sentry disabled in fork - DSN points to original project
+    log.info('Bug tracking disabled in fork version.');
 };

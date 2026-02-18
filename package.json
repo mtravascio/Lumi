@@ -1,10 +1,14 @@
 {
     "name": "lumi",
-    "version": "0.9.4",
-    "private": true,
-    "description": "A tool to create and display interactive content with H5P",
-    "author": "Lumi Education Jan Philip Schellenberg & Sebastian Rettig GbR <c@lumi.education>",
+    "version": "0.11.0",
+    "private": false,
+    "description": "A tool to create and display interactive content with H5P - Fork with SCORM export fixes",
+    "author": "mtravascio <mtravascio@users.noreply.github.com>",
     "main": "build/server/main.js",
+    "homepage": "https://github.com/mtravascio/Lumi#readme",
+    "bugs": {
+        "url": "https://github.com/mtravascio/Lumi/issues"
+    },
     "dependencies": {
         "@lumieducation/h5p-express": "9.1.2",
         "@lumieducation/h5p-html-exporter": "9.1.2",
@@ -105,7 +109,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/Lumieducation/Lumi.git"
+        "url": "https://github.com/mtravascio/Lumi.git"
     },
     "engines": {
         "node": ">=16.0.0",

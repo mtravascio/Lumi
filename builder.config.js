@@ -1,5 +1,5 @@
 module.exports = {
-    appId: 'education.lumi.lumi',
+    appId: 'io.github.mtravascio.lumi',
     productName: 'Lumi',
     asar: true,
     icon: 'electron/assets/lumi.icns',

@@ -9,11 +9,7 @@ export default function (window: electron.BrowserWindow): any {
             {
                 click: () => {
                     electron.shell.openExternal(
-                        `mailto:c@lumi.education?subject=${encodeURI(
-                            i18next.t('lumi:bug_report.email.subject')
-                        )}&body=${encodeURI(
-                            i18next.t('lumi:bug_report.email.body')
-                        )}`
+                        `https://github.com/mtravascio/Lumi/issues`
                     );
                 },
                 label: i18next.t('lumi:menu.help.report_issue')
@@ -26,14 +22,6 @@ export default function (window: electron.BrowserWindow): any {
                 label: i18next.t('lumi:menu.help.toggle_developer_tools')
             },
             { type: 'separator' } as any,
-            {
-                click: () => {
-                    electron.shell.openExternal(
-                        'https://www.twitter.com/Lumieducation'
-                    );
-                },
-                label: i18next.t('lumi:menu.help.follow_us_on_twitter')
-            },
             {
                 label: i18next.t('lumi:privacy_policy.title'),
                 click: () => {
@@ -50,7 +38,7 @@ export default function (window: electron.BrowserWindow): any {
                           dialog.showMessageBox(window, {
                               message: `Lumi v${electron.app.getVersion()} - ${
                                   platformInfo?.package ?? 'unknown package'
-                              }\n(C) 2022 Lumi Education GbR Jan Philip Schellenberg und Sebastian Rettig\nAGPL 3.0 License`
+                              }\nFork with SCORM export fixes\nBased on Lumi by Lumi Education GbR\nAGPL 3.0 License`
                           });
                       }
                   }
